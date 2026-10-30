@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Pathfinder{% endblock %}
+{% block content %}
+<section class="page-section"><div class="container">
+  <div class="page-heading d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+    <div><span class="eyebrow dark-eyebrow">STUDENT WORKSPACE</span><h1>Your dashboard</h1><p>Pick up where you left off, or start a fresh resume review.</p></div>
+    <a class="btn btn-primary" href="{{ url_for('main.upload') }}">＋ New analysis</a>
+  </div>
+  <div class="dashboard-banner"><div><span class="banner-kicker">A SMALL STEP FORWARD</span><h2>Make your next move with confidence.</h2><p>Get a clear snapshot of your strengths and a practical plan to grow.</p></div><a href="{{ url_for('main.upload') }}" class="btn btn-light">Start here <span aria-hidden="true">→</span></a></div>
+  <div class="d-flex justify-content-between align-items-center mt-5 mb-3"><div><span class="eyebrow dark-eyebrow">YOUR RECENT WORK</span><h2 class="h3 mt-2 mb-0">Analysis history</h2></div><span class="small text-muted">Most recent 10</span></div>
+  {% if analyses %}
+  <div class="history-list">
+    {% for item in analyses %}
+    <a class="history-row" href="{{ url_for('main.results', analysis_id=item.id) }}">
+      <span class="history-icon">▤</span><span class="history-info"><strong>{{ item.original_filename }}</strong><small>{{ item.created_at.strftime('%b %d, %Y · %H:%M') }} · {{ item.analysis_mode|capitalize }} mode</small></span>
+      {% if item.target_role %}<span class="role-badge">{{ item.target_role }}</span>{% endif %}<span class="history-arrow">→</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="empty-icon">▤</div><h3>No analyses yet</h3><p>Your analyses will appear here. Your resume text and uploaded file are not stored.</p><a class="btn btn-outline-primary" href="{{ url_for('main.upload') }}">Analyze your first resume</a></div>
+  {% endif %}
+</div></section>
+{% endblock %}

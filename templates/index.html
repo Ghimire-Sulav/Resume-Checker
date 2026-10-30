@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Pathfinder | Make your next move{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="eyebrow"><span class="pulse-dot"></span> YOUR CAREER, WITH A CLEARER PATH</span>
+        <h1>Turn your resume into<br><span class="gradient-text">your next opportunity.</span></h1>
+        <p class="hero-copy">Get thoughtful, actionable feedback on your skills, career fit, and next learning steps — all in one place.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a class="btn btn-primary btn-lg" href="{{ url_for('main.upload') }}">Analyze my resume <span aria-hidden="true">→</span></a>
+          <a class="btn btn-outline-light btn-lg" href="{{ url_for('main.dashboard') }}">View dashboard</a>
+        </div>
+        <div class="hero-note mt-4"><span class="check-icon">✓</span> No account required <span class="sep">·</span> Files aren't kept after analysis</div>
+      </div>
+      <div class="col-lg-5">
+        <div class="preview-card">
+          <div class="preview-top"><span class="preview-label">YOUR PROFILE SNAPSHOT</span><span class="status-pill">READY TO GROW</span></div>
+          <div class="score-row"><div><div class="muted-label">ROLE ALIGNMENT</div><div class="score-number">72<span>%</span></div></div><div class="score-ring"><span>72%</span></div></div>
+          <div class="progress-label"><span>Skills match</span><span>Good foundation</span></div><div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+          <div class="preview-divider"></div>
+          <div class="preview-item"><span class="item-icon violet">✦</span><div><strong>Strengths found</strong><small>Skills and experience, clearly mapped</small></div><span class="item-arrow">↗</span></div>
+          <div class="preview-item"><span class="item-icon blue">◎</span><div><strong>Next skills to build</strong><small>Prioritized around your career goals</small></div><span class="item-arrow">↗</span></div>
+          <div class="preview-foot"><span>✦</span> A sample preview — your results reflect your resume.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="feature-section"><div class="container">
+  <div class="section-heading"><span class="eyebrow dark-eyebrow">YOUR CAREER TOOLKIT</span><h2>One resume. A clearer direction.</h2><p>Turn what's on the page into practical actions for what comes next.</p></div>
+  <div class="row g-3">
+    {% for icon, title, copy, tone in [
+      ('✦','Understand your strengths','See skills, education, projects, and experience pulled into one useful snapshot.','violet'),
+      ('◎','Find roles that fit','Explore role matches with a clear explanation of how your listed skills align.','blue'),
+      ('↗','Build your next skill','Get prioritized learning ideas with practical next steps and time estimates.','green'),
+      ('⌁','Polish your resume','Get actionable suggestions for clearer writing, structure, and ATS-friendly formatting.','orange')
+    ] %}
+    <div class="col-md-6 col-lg-3"><article class="feature-card"><span class="item-icon {{ tone }}">{{ icon }}</span><h3>{{ title }}</h3><p>{{ copy }}</p></article></div>
+    {% endfor %}
+  </div>
+</div></section>
+{% endblock %}

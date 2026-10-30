@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Learning recommendations | Pathfinder{% endblock %}
+{% block content %}
+<section class="page-section"><div class="container narrow-container">
+  <a class="back-link" href="{{ url_for('main.results', analysis_id=record.id) }}">← Back to analysis</a>
+  <div class="page-heading mt-3"><span class="eyebrow dark-eyebrow">A PRACTICAL GROWTH PLAN</span><h1>What to learn next.</h1><p>Suggestions are based on skills not found in your resume text. Choose what fits your goals.</p></div>
+  {% if suggestions %}
+    <div class="learning-list">{% for item in suggestions %}<article class="learning-card"><div class="d-flex justify-content-between align-items-start gap-3"><div><span class="level-pill level-{{ item.level|lower }}">{{ item.level }}</span><h2>{{ item.skill }}</h2></div><span class="time-estimate">◷ {{ item.estimated_learning_time }}</span></div><p>{{ item.recommendation }}</p>{% if item.free_resources %}<div class="resource-links"><strong>Free resources</strong>{% for resource in item.free_resources %}<a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer">{{ resource.name }} ↗</a>{% endfor %}</div>{% endif %}</article>{% endfor %}</div>
+  {% else %}<div class="empty-state"><h3>No learning suggestions yet</h3><p>Try selecting a specific role to get tailored suggestions.</p><a class="btn btn-primary" href="{{ url_for('main.upload') }}">Analyze another resume</a></div>{% endif %}
+  <div class="privacy-note mt-4"><span>✦</span><div><strong>Small, consistent steps work.</strong><p>Learning-time estimates are illustrative, not promises. Build projects to demonstrate skills you actually acquire.</p></div></div>
+</div></section>
+{% endblock %}

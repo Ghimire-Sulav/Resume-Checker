@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}About | Pathfinder{% endblock %}
+{% block content %}
+<section class="page-section"><div class="container narrow-container">
+  <span class="eyebrow dark-eyebrow">ABOUT PATHFINDER</span><h1 class="about-title">A little clarity for your next step.</h1>
+  <p class="about-lead">Pathfinder is a student-focused resume feedback tool. It helps you surface skills, explore role alignment, and decide what to improve next.</p>
+  <div class="result-card mt-4"><h2>How your data is handled</h2><ul class="action-list"><li>Uploaded files are processed in memory and aren't written to disk. A separate copy of the full pasted or extracted resume text isn't saved.</li><li>The structured analysis, source filename, selected role, timestamp, and analysis mode are saved in the configured database. Extracted section details may repeat information from your resume.</li><li>If Gemini is configured, resume text is sent to Google's Gemini API for analysis. Configure this only after reviewing the provider's privacy terms.</li><li>This starter app has no user accounts or access controls. Use it only on a trusted local machine until authentication and deployment safeguards are added.</li></ul></div>
+  <div class="result-card mt-3"><h2>How to read the results</h2><p class="mb-0">Role-match estimates use a disclosed rubric: required-skill coverage contributes 70%, and project evidence, experience evidence, and education or certification evidence contribute 10% each. These percentages are not hiring probabilities or ATS scores. AI-generated suggestions may need human review; no result guarantees interviews or hiring outcomes.</p></div>
+  <a class="btn btn-primary mt-4" href="{{ url_for('main.upload') }}">Analyze your resume →</a>
+</div></section>
+{% endblock %}

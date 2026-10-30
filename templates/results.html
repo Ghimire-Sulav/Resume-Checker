@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Analysis results | Pathfinder{% endblock %}
+{% block content %}
+<section class="page-section"><div class="container">
+  <div class="results-heading d-flex flex-column flex-md-row justify-content-between gap-3 align-items-md-end">
+    <div><a class="back-link" href="{{ url_for('main.dashboard') }}">← Dashboard</a><span class="eyebrow dark-eyebrow d-block mt-3">YOUR PERSONALIZED REVIEW</span><h1>Here’s your snapshot.</h1><p>{{ record.original_filename }} · {{ record.created_at.strftime('%b %d, %Y') }}</p></div>
+    <div class="d-flex flex-wrap gap-2"><a class="btn btn-outline-primary" href="{{ url_for('main.pdf_report', analysis_id=record.id) }}">↓ Download PDF</a><a class="btn btn-outline-primary" href="{{ url_for('main.report', analysis_id=record.id) }}">Download text</a><a class="btn btn-primary" href="{{ url_for('main.upload') }}">Analyze another resume</a></div>
+  </div>
+  <div class="mode-note {{ 'demo-note' if record.analysis_mode == 'demo' else 'ai-note' }}"><span>{{ 'ⓘ Demo analysis' if record.analysis_mode == 'demo' else '✦ Gemini AI analysis' }}</span><span>{{ analysis.analysis_notice or ('Model-generated analysis; verify suggestions.' if record.analysis_mode == 'gemini' else 'Rule-based analysis only; not AI-generated.') }}</span></div>
+  <div class="row g-4 mt-1">
+    <div class="col-lg-8">
+      <article class="result-card summary-card"><div class="card-eyebrow">✦ &nbsp;RESUME SUMMARY</div><p class="summary-copy">{{ analysis.resume_summary }}</p></article>
+      <article class="result-card mt-4"><div class="result-title"><span class="item-icon green">✦</span><div><h2>Overall feedback</h2><p>Strengths and opportunities based on this resume</p></div></div><p>{{ analysis.overall_feedback }}</p><div class="row g-3 mt-2"><div class="col-md-6"><h3 class="subheading">Strengths</h3><ul class="action-list">{% for item in analysis.strengths %}<li>{{ item }}</li>{% else %}<li>Review your listed experience and skills.</li>{% endfor %}</ul></div><div class="col-md-6"><h3 class="subheading">Areas to improve</h3><ul class="action-list">{% for item in analysis.weaknesses %}<li>{{ item }}</li>{% else %}<li>No specific weaknesses were identified.</li>{% endfor %}</ul></div></div></article>
+      <article class="result-card mt-4"><div class="result-title"><span class="item-icon orange">▤</span><div><h2>Resume sections</h2><p>Extracted details from the submitted document</p></div></div>
+        {% for label, key in [('Career objective', 'career_objective'), ('Education', 'education'), ('Experience / internships', 'experience'), ('Projects', 'projects'), ('Certifications', 'certifications'), ('Achievements', 'achievements')] %}
+        <div class="resume-section"><h3 class="subheading">{{ label }}</h3>{% if analysis[key] %}<ul class="action-list">{% for item in analysis[key] %}<li>{{ item }}</li>{% endfor %}</ul>{% else %}<p class="text-muted small">No {{ label|lower }} details were detected in the provided text.</p>{% endif %}</div>
+        {% endfor %}
+      </article>
+      <article class="result-card mt-4"><div class="result-title"><span class="item-icon violet">◎</span><div><h2>Skills analysis</h2><p>Unique skills grouped by category</p></div></div><h3 class="subheading">Technical skills</h3>
+        {% for category, skills in analysis.technical_skill_categories.items() %}<h3 class="subheading mt-3">{{ category }}</h3><div class="d-flex flex-wrap gap-2">{% for skill in skills %}<span class="skill-chip">{{ skill }}</span>{% else %}<span class="text-muted small">No skills detected in this category.</span>{% endfor %}</div>{% endfor %}
+        <h3 class="subheading mt-4">Soft skills</h3><div class="d-flex flex-wrap gap-2">{% for skill in analysis.soft_skills %}<span class="skill-chip soft-chip">{{ skill }}</span>{% else %}<span class="text-muted small">No soft skills were identified.</span>{% endfor %}</div>
+      </article>
+      <article class="result-card mt-4"><div class="result-title"><span class="item-icon blue">↗</span><div><h2>Resume improvement suggestions</h2><p>Review and adapt suggestions without adding unverified claims</p></div></div>
+        {% for item in analysis.resume_improvements %}<div class="improvement-item"><h3 class="subheading">{{ item.category }}</h3><p>{{ item.suggestion }}</p>{% if item.weak_example %}<div class="example-line"><strong>Current wording:</strong> {{ item.weak_example }}</div>{% endif %}{% if item.improved_example %}<div class="example-line improved-example"><strong>Possible rewrite:</strong> {{ item.improved_example }}</div>{% endif %}</div>{% endfor %}
+        <h3 class="subheading mt-4">ATS compatibility</h3><ul class="action-list">{% for item in analysis.ats_suggestions %}<li>{{ item }}</li>{% endfor %}</ul>
+      </article>
+    </div>
+    <div class="col-lg-4">
+      <article class="result-card"><div class="result-title"><span class="item-icon green">⌖</span><div><h2>Role recommendations</h2><p>Transparent skill and evidence comparison</p></div></div>
+        {% for role in analysis.job_recommendations %}<div class="match-item"><div class="d-flex justify-content-between align-items-center"><strong>{{ role.job_title }}</strong><span class="match-percent">{{ role.match_percentage }}%</span></div><div class="mini-track"><span style="width:{{ role.match_percentage }}%"></span></div><p>{{ role.reason }}</p><p class="match-detail"><strong>Matched:</strong> {{ role.matching_skills|join(', ') if role.matching_skills else 'No checklist skills detected' }}</p><p class="match-detail"><strong>To develop:</strong> {{ role.missing_skills|join(', ') if role.missing_skills else 'None from this role checklist' }}</p></div>{% endfor %}
+        <p class="match-criteria">{{ analysis.match_criteria }}</p>
+      </article>
+      <article class="result-card mt-4"><div class="result-title"><span class="item-icon orange">＋</span><div><h2>Missing skills</h2><p>Prioritized by the top role matches</p></div></div>
+        {% for item in analysis.missing_skills[:10] %}<div class="gap-item"><div class="d-flex justify-content-between gap-2"><strong>{{ item.skill }}</strong><span class="importance-pill">{{ item.importance }}</span></div><small>{{ item.job_role }}</small><p>{{ item.why_it_matters }}</p></div>{% else %}<p class="small text-muted">No skills gaps were identified for the recommended roles.</p>{% endfor %}
+        <a class="text-link d-block mt-3" href="{{ url_for('main.learning', analysis_id=record.id) }}">See learning suggestions →</a>
+      </article>
+      <article class="quote-card mt-4"><span>✦</span><p>Match percentages are calculated from the displayed checklist and resume evidence. They are guidance, not hiring probabilities or ATS scores.</p></article>
+    </div>
+  </div>
+</div></section>
+{% endblock %}

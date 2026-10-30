@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Analyze resume | Pathfinder{% endblock %}
+{% block content %}
+<section class="page-section"><div class="container narrow-container">
+  <a class="back-link" href="{{ url_for('main.dashboard') }}">← Dashboard</a>
+  <div class="page-heading mb-4"><span class="eyebrow dark-eyebrow">YOUR NEXT STEP</span><h1>Let's get to know your resume.</h1><p>Upload a file or paste your resume text. Your original resume isn't saved.</p></div>
+  <form action="{{ url_for('main.upload') }}" method="post" enctype="multipart/form-data" id="resume-form">
+    <div class="form-card">
+      <label class="form-label fw-semibold" for="resume_file">Upload your resume</label>
+      <label class="drop-zone" for="resume_file" id="drop-zone">
+        <span class="upload-icon">↑</span><strong id="file-name">Drop your resume here, or <span>browse files</span></strong>
+        <small>PDF, DOCX, or TXT · Up to 5 MB</small>
+        <input class="visually-hidden" type="file" id="resume_file" name="resume_file" accept=".pdf,.docx,.txt">
+      </label>
+      <div class="or-divider"><span>OR PASTE TEXT</span></div>
+      <label class="form-label fw-semibold" for="resume_text">Resume content</label>
+      <textarea class="form-control resume-textarea" id="resume_text" name="resume_text" maxlength="30000" placeholder="Paste your resume text here. Include the sections you'd like feedback on."></textarea>
+      <div class="d-flex justify-content-between text-muted small mt-2"><span>Paste text if you don't have a file handy.</span><span id="char-count">0 / 30,000</span></div>
+      <label class="form-label fw-semibold mt-4" for="target_role">Preferred job role <span class="text-muted fw-normal">(optional)</span></label>
+      <select class="form-select" id="target_role" name="target_role"><option value="">Recommend roles automatically</option>{% for role in job_roles %}<option value="{{ role }}">{{ role }}</option>{% endfor %}</select>
+    </div>
+    <div class="privacy-note"><span>🔒</span><div><strong>Your resume stays yours.</strong><p>We don't save the uploaded file or a separate copy of the full resume text. The structured analysis and source filename are saved locally. If Gemini is configured, resume text is sent to Google for model processing.</p></div></div>
+    <button class="btn btn-primary btn-lg w-100 mt-3" id="analyze-button" type="submit">Analyze resume <span aria-hidden="true">→</span></button>
+  </form>
+</div></section>
+{% endblock %}
